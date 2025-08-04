@@ -18,7 +18,7 @@ export default async function handler(request, response) {
 
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash-latest"
+            model: "gemini-1.0-pro",
         });
 
         const prompt = `Du bist ein Experte für Shell-Befehle... Antworte immer mit einem JSON-Objekt... Benutzeranfrage: "${userInput}"`;
