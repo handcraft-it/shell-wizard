@@ -1,0 +1,187 @@
+/* IMPROVED CSS WITH PROPER CENTERING */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+    --bg-color: #111827;
+    --card-color: #1F2937;
+    --border-color: #374151;
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --accent-color: #4f46e5;
+    --code-bg: #000000;
+    --code-text: #22c55e;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.App {
+    padding: 4rem 1rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.main-content {
+    max-width: 650px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+h1 span {
+    margin-right: 0.75rem;
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-top: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.command-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    align-items: center;
+}
+
+textarea {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+    width: 100%;
+    min-height: 120px;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+}
+
+textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+button {
+    background-color: var(--accent-color);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    align-self: center;
+    min-width: 120px;
+}
+
+button:hover:not(:disabled) {
+    background-color: #4338ca;
+}
+
+button:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.result-container {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 2.5rem;
+    background-color: var(--card-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.result-container h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.command-output {
+    background-color: var(--code-bg);
+    color: var(--code-text);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.explanation-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: left;
+}
+
+.error-message {
+    color: #ef4444;
+    margin-top: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.footer {
+    text-align: center;
+    padding-top: 4rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    width: 100%;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .App {
+        padding: 2rem 1rem;
+    }
+
+    h1 {
+        font-size: 1.875rem;
+    }
+
+    .main-content {
+        max-width: 100%;
+    }
+}

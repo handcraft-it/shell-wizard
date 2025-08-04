@@ -1,0 +1,17 @@
+# Umgebungsvariablen - NIEMALS hochladen!
+.env
+.env*.local
+
+# Build-Ordner von Vite
+dist
+dist-ssr
+
+# Log-Dateien und temporäre Dateien
+*.log
+npm-debug.log*
+
+# Systemdateien
+.DS_Store
+
+# Abhängigkeiten - werden bei der Installation neu geladen
+node_modules
