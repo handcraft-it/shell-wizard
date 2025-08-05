@@ -1,4 +1,4 @@
-// /api/command.js (Fixed with Retry Logic and Fallback Models)
+// /api/command.js (Fixed JSON Parsing)
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
 export default async function handler(request, response) {
@@ -46,8 +46,14 @@ export default async function handler(request, response) {
       "gemini-1.5-pro", // More powerful but slower
     ]
 
-    // 6. Create the prompt
-    const prompt = `Du bist ein Experte für Shell-Befehle. Dein einziges Ziel ist es, eine JSON-Antwort zu generieren. Antworte NUR mit einem validen JSON-Objekt, das exakt folgendes Format hat: {"command": "der_befehl", "explanation": "eine_kurze_erklaerung"}. Die Anfrage des Benutzers lautet: "${userInput}"`
+    // 6. Create the prompt with clearer instructions
+    const prompt = `Du bist ein Experte für Shell-Befehle. Antworte AUSSCHLIESSLICH mit einem validen JSON-Objekt ohne jegliche Markdown-Formatierung oder Code-Blöcke. Das JSON-Objekt muss exakt folgendes Format haben:
+
+{"command": "der_shell_befehl", "explanation": "eine_kurze_erklaerung"}
+
+Anfrage des Benutzers: "${userInput}"
+
+Antworte NUR mit dem JSON-Objekt, keine zusätzlichen Zeichen oder Formatierung.`
 
     // 7. Try each model with retry logic
     let lastError = null
@@ -72,25 +78,56 @@ export default async function handler(request, response) {
             const geminiResponse = await result.response
             const text = geminiResponse.text()
 
-            console.log("Success! Gemini response received:", text.substring(0, 100) + "...")
+            console.log("Success! Gemini response received:", text.substring(0, 200) + "...")
 
-            // 8. Parse and validate JSON response
+            // 8. Parse and validate JSON response with improved handling
             let parsedResponse
             try {
-              parsedResponse = JSON.parse(text)
+              let cleanText = text.trim()
+
+              // Remove markdown code blocks if present
+              if (cleanText.startsWith("```json")) {
+                cleanText = cleanText.replace(/^```json\s*/, "").replace(/\s*```$/, "")
+              } else if (cleanText.startsWith("```")) {
+                cleanText = cleanText.replace(/^```\s*/, "").replace(/\s*```$/, "")
+              }
+
+              console.log("Cleaned text for parsing:", cleanText)
+
+              parsedResponse = JSON.parse(cleanText)
 
               // Validate the response structure
               if (!parsedResponse.command || !parsedResponse.explanation) {
                 throw new Error("Invalid response structure")
               }
+
+              console.log("Successfully parsed response:", parsedResponse)
             } catch (parseError) {
               console.error("Failed to parse Gemini response:", parseError)
               console.error("Raw response:", text)
 
-              // Fallback response
-              parsedResponse = {
-                command: "echo 'Error parsing AI response'",
-                explanation: "Die KI-Antwort konnte nicht verarbeitet werden.",
+              // Try to extract JSON manually as fallback
+              try {
+                const jsonMatch = text.match(/\{[\s\S]*\}/)
+                if (jsonMatch) {
+                  parsedResponse = JSON.parse(jsonMatch[0])
+                  console.log("Fallback parsing successful:", parsedResponse)
+
+                  // Validate fallback response
+                  if (!parsedResponse.command || !parsedResponse.explanation) {
+                    throw new Error("Invalid fallback response structure")
+                  }
+                } else {
+                  throw new Error("No JSON found in response")
+                }
+              } catch (fallbackError) {
+                console.error("Fallback parsing also failed:", fallbackError)
+
+                // Final fallback response
+                parsedResponse = {
+                  command: "echo 'Error parsing AI response'",
+                  explanation: "Die KI-Antwort konnte nicht verarbeitet werden.",
+                }
               }
             }
 
